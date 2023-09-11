@@ -95,5 +95,29 @@ describe('Validate that an order can be checkout', () => {
 
 
 
+        //Notes:
+
+
+        // Cypress offers api test coverage, and because api and ui tests require db seeding
+        // I would bundle them together. I would focus on the different iterations of checkout
+        // with different user states in order to vet out site permissions.
+
+        // The process of logging in only needs coverage from the UI once and then every other
+        // test should programmatically login, I'm only including the ui steps for the sake of
+        // demonstration
+
+        // Also not included is logic to handle the differing viewport sizes to minimize false
+        // negatives
+
+        // Also need to add better state handling to ensure that the cart is empty before adding
+        // any items, as well as programmatically logging out after each test.
+
+        // Cypress strength is in being able to manipulate state and understand the nature of the 
+        // application at any given point. In order to fully utlize the tool, I would also focus
+        // on building out the tooling behind dropping each step into a different point in the app
+
+
+
+
     })
 })
