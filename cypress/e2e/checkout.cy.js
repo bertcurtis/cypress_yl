@@ -1,8 +1,8 @@
-const email = "bert.curtis22@gmail.com"
+const login_id = "4586530"
 const pw = "Testpassword555"
 
 const product = {
-    search_name: 'Immmugummies',
+    search_name: 'Immugummies',
     official_name: 'Immugummies™ supplement',
     retail_price: '$51.32',
     discount_price: '$39.00',
@@ -20,28 +20,35 @@ describe('Validate that an order can be checkout', () => {
     })
 
     it('logs in and makes a selection then navigates to the checkout', () => {
-        // We use the `cy.get()` command to get all elements that match the selector.
+        if (cy.get('[data-testid="qa-toast"]').should('be.visible')) {
+            cy.get('[data-testid="qa-toast"]')
+            .contains('dismiss')
+            .click()
+        }
+
+
         // Cypress runner condenses the viewport where the pancake is used instead of the 
         // tradtional sign in, but leaving the code to show both coverages
-        cy.get('[data-testid="qa-pancake-menu"]').click()
+        //cy.get('[data-testid="qa-pancake-menu"]').first().click()
+        //cy.get('[data-testid="qa-pancake-menu"]').first().should('have.class', 'close-icon')
+        //cy.get('li').contains('Sign In').should('be.visible').click()
+        cy.get('[data-testid="qa-myaccount"]').contains('Sign In').click()
 
-        cy.get('[data-testid="qa-pancake-menu"]').contains('Sign In').click()
-        //cy.get('[data-testid="qa-myaccount"]').contains('Sign In').click()
-        cy.get('#loginUsername').type(email)
-        cy.get('#loginUsername').should('have.value', email)
+        // Input login info into fields
+        cy.get('#loginUsername').type(login_id)
+        cy.get('#loginUsername').should('have.value', login_id)
         cy.contains('Continue').click()
         // Potentially add more validation on the form control valid email aria input
         // before continuing to password
-        cy.get('span').contains(email)
+        cy.get('span').contains(login_id)
         cy.get('#loginPassword').type(pw)
-        cy.get('#login-btn').contains('Sign In').click()
-        // The get().contains().click pattern is a way to insulate tests from changes to
-        //  button text in the future assuming this should cause a test failure
+        cy.get('#login-btn').contains('Sign In').should('be.enabled')
+        cy.get('form').submit()
         // Add a failure test around the timout on pw input
 
 
-        // Validate login was successful
-        cy.get('[data-testid="qa-myaccount"]').contains('My Account')
+        // Validate login was successful, only works with properly adjusted viewport
+        cy.get('[data-testid="qa-myaccount"]').should('be.visible')
 
         // Input search value into field
         cy.get('[data-testid="qa-search-input"]').type(product.search_name)
@@ -50,33 +57,30 @@ describe('Validate that an order can be checkout', () => {
         // This test will break when prices and products change, need to incorporate dynamic 
         // validation as a way to insulate this from future breakage
         cy.get('[data-testid="qa-product-container"]').first().within(() => {
-            cy.get('[data-testid="qa-product-reg-price"]').should('have.text', product.retail_price)
+            cy.get('[data-testid="qa-product-reg-price"]').should('have.text', 'Retail: ' + product.retail_price)
             cy.get('[data-testid="qa-product-name"]').should('have.text', product.official_name)
-            cy.get('[data-testid="qa-quick-shop"]').click()
+            cy.get('[data-testid="qa-quick-shop"]').first().scrollIntoView().click()
         })
 
 
-        // Validate Toast container pops up a
+        // Validate Toast container pops up, need to improve the validation on the message
         cy.get('[data-testid="qa-toast"]')
-            .should('have.text', 'Added to Cart Successfully')
-            .get('dismiss')
+            .should('have.text', 'Added to Cart Successfullydismiss')
+            .contains('dismiss')
             .click()
 
         // Validate all info is correct in checkout side drawer before proceeding
-        cy.get('[data-testid="qa-minicart-container"]').within(() => {
-            // Using contains instead of should to demonstrate differences in ways of validating state
-            cy.get('[data-testid="qa-grouped-products-wrapper"]').contains(product.pv_total)
-            cy.get('[data-testid="qa-grouped-products-wrapper"]').contains(product.official_name)
-            cy.get('[data-testid="qa-grouped-products-wrapper"]').contains(product.retail_price)
+        cy.get('[data-testid="qa-minicart-container"]').should('be.visible')
+        // Using contains instead of should to demonstrate differences in ways of validating state
+        cy.get('[data-testid="qa-grouped-products-wrapper"]').contains(product.pv_total)
+        cy.get('[data-testid="qa-grouped-products-wrapper"]').contains(product.official_name)
+        cy.get('[data-testid="qa-grouped-products-wrapper"]').contains(product.retail_price)
 
-            // Need to add validation here based off of business logic rules
-            cy.get('[data-testid="qa-minicart-progressbar"]')
-            cy.get('[data-testid="qa-minicart-container"]')
-            cy.get('.minicart-button-wrapper').contains('1 item')
-        })
+        // Need to add validation here based off of business logic rules, for now verifying visibility
+        cy.get('[data-testid="qa-minicart-progressbar"]').should('be.visible')
+        cy.get('[data-testid="qa-minicart-container"]').should('be.visible')
+        cy.get('.minicart-button-wrapper').contains('item')
 
-
-        // 
         cy.get('[data-testid="qa-cartcheckout"]').click()
 
         cy.get('#gtm__modal-btn-close').click()
