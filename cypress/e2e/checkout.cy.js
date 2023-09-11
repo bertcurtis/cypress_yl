@@ -42,10 +42,15 @@ describe('Validate that an order can be checkout', () => {
         // before continuing to password
         cy.get('span').contains(login_id)
         cy.get('#loginPassword').type(pw)
-        cy.get('#login-btn').contains('Sign In').should('be.enabled')
-        cy.get('form').submit()
+        cy.get('#loginPassword').should('have.value', pw)
+        cy.get('#login-btn').contains('Sign In').should('be.visible')
+        cy.get('#login-btn').click()
+        //cy.get('form').submit()
         // Add a failure test around the timout on pw input
 
+
+        //given user is logged in
+        
 
         // Validate login was successful, only works with properly adjusted viewport
         cy.get('[data-testid="qa-myaccount"]').should('be.visible')
@@ -62,6 +67,9 @@ describe('Validate that an order can be checkout', () => {
             cy.get('[data-testid="qa-quick-shop"]').first().scrollIntoView().click()
         })
 
+        // The above was fickle, so this was a shortcut less ideal solution
+        // cy.get('[data-testid="qa-product-reg-price"]').first().should('have.text', 'Retail: ' + product.retail_price)
+        // cy.get('[data-testid="qa-quick-shop"]').first().scrollIntoView().click()
 
         // Validate Toast container pops up, need to improve the validation on the message
         cy.get('[data-testid="qa-toast"]')
