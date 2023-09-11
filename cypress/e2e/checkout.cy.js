@@ -86,6 +86,14 @@ describe('Validate that an order can be checkout', () => {
         cy.get('#gtm__modal-btn-close').click()
 
 
+        cy.get('[data-testid="qa-estimated-total-value"]').contains(product.retail_price)
+        cy.get('[data-testid="qa-cart-checkout"]').contains("Checkout").click()
+        cy.get('[data-testid="qa-referral-code-continue"]').click()
+        cy.get('[data-testid="qa-confirm-yes"]').click()
+        // Could not continue past this point, the modal would not close after clicking
+        // I would submit a bug at this point and continue once the issue was resolved
+
+
 
     })
 })
